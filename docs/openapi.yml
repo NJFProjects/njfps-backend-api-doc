@@ -1,61 +1,64 @@
 openapi: 3.0.3
 info:
-  title: UserAccount API
-  description: For users
+  title: NJFProjects API
+  description: This is the API documentation for the NJFProjects API.
   version: 1.0.0
 tags:
-  - name: User
-    description: User related operations
+  - name: Accounts
+    description: Accounts and Sessions related operations
+  - name: Profiles
+    description: Profiles related operations
+  - name: Tags
+    description: Tags and Tag Categories related operations
+  - name: Projects
+    description: Projects and Files related operations
 servers:
   - url: https://example.com
 paths:
-  /users/{id}:
-    put:
-      summary: Modify user
-      description: |
-        Modify the user and return `updated_at`.
-        
-        Needs **Authentication**!
-      operationId: modifyUser
-      tags:
-      - User
-      security:
-      - MyToken: []
-      parameters:
-      - name: id
+  /accounts/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
         in: path
         required: true
-        schema:
-          type: string
-      - name: role
-        in: query
-        schema:
-          type: string
-          enum:
-          - admin
-          - member
-          default: member
-
+    get:
+      tags:
+      - Accounts
+      summary: View Account
+      operationId: viewAccountWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+    put:
+      tags:
+      - Accounts
+      summary: Modify Account
+      operationId: modifyAccountWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
       requestBody:
         content:
           application/json:
             schema:
-              oneOf:
-              - $ref: '#/components/schemas/Employee'
-              - $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/Account'
+    delete:
+      tags:
+      - Accounts
+      summary: Delete Account
+      operationId: deleteAccountWithId
       responses:
-        '200':
-          description: Updated user
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '403': 
-          description: Forbidden
-          content:
-            application/problem+json: 
-              schema:
-                $ref: '#/components/schemas/Error' 
+        '204':
+          description: No Content
 components:
   securitySchemes:
     MyToken:
@@ -63,35 +66,137 @@ components:
       in: header
       name: Authorization
   schemas:
-    User:
+    Account:
       type: object
-      required: [id, name]
+      properties:
+        id:
+          type: string
+          readOnly: true 
+        email:
+          type: string
+          format: email
+        created_time:
+          type: string
+          format: date-time 
+          writeOnly: true  
+        password:
+          type: string
+          format: password 
+          writeOnly: true 
+          minLength: 8
+    Profile:
+      type: object
       properties:
         id:
           type: string
           readOnly: true 
         name:
           type: string
-        password:
+          minLength: 2 
+          maxLength: 50
+        description:
           type: string
-          format: password 
-          writeOnly: true 
-    Employee:
-      allOf: 
-      - $ref: '#/components/schemas/User'
-      - type: object
-        required:
-        - employee_id
-        properties:
-          employee_id:
-            type: string
-    Customer:
-      allOf:
-      - $ref: '#/components/schemas/User'
-      - type: object
-        properties:
-          sales_rep_id:
-            type: string
+        updated_time:
+          type: string
+          format: date-time 
+          writeOnly: true
+        profile_photo:
+          type: string
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true 
+        tag_category_id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+    Tag Category:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+        color:
+          type: string
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        project_id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+        reference:
+          type: string
+        uploaded_time:
+          type: string
+          format: date-time 
+          writeOnly: true
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        account_id:
+          type: string
+          readOnly: true
+        share:
+          type: string
+          enum:
+            - public
+            - private
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+        like_number:
+          type: integer
+          minLength: 0
+        watch_number:
+          type: integer
+          minLength: 0
+        bookmark_number:
+          type: integer
+          minLength: 0
+        from_date:
+          type: string
+          format: date
+        to_date:
+          type: string
+          format: date
+        team_size:
+          type: integer
+          minLength: 0
+        summary:
+          type: string
+        created_time:
+          type: string
+          format: date-time 
+          writeOnly: true
+        photo:
+          type: string
+    Session:
+      type: object
+      properties:
+        user_id:
+          type: string
+        auth_header:
+          type: string
     Error: 
       type: object
       properties:

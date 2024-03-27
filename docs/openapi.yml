@@ -1,8 +1,21 @@
 openapi: 3.0.3
 info:
   title: NJFProjects API
-  description: This is the API documentation for the NJFProjects API.
-  version: 1.0.0
+  version: 0.1.0
+  description: |-
+
+    This is the API documentation for the NJFProjects API, an API could hosting all your projects and files.
+    ---
+
+    # Auth
+    To get a **SecurityToken**:
+    1. Create a **Account** with `POST /accounts``
+    1. Get a **SecurityToken** by calling `POST /sessions`` with your **Account** credentials.
+
+  contact:
+    name: NJFProjects API Support Team
+    email: njfps.net@gmail.com
+
 tags:
   - name: Accounts
     description: Accounts and Sessions related operations

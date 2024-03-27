@@ -1,100 +1,1067 @@
 openapi: 3.0.3
 info:
-  title: UserAccount API
-  description: For users
+  title: NJFProjects API
+  description: This is the API documentation for the NJFProjects API.
   version: 1.0.0
 tags:
-  - name: User
-    description: User related operations
+  - name: Accounts
+    description: Accounts and Sessions related operations
+  - name: Profiles
+    description: Profiles related operations
+  - name: Tags
+    description: Tags and Tag Categories related operations
+  - name: Projects
+    description: Projects and Files related operations
 servers:
   - url: https://example.com
 paths:
-  /users/{id}:
-    put:
-      summary: Modify user
-      description: |
-        Modify the user and return `updated_at`.
-        
-        Needs **Authentication**!
-      operationId: modifyUser
+  /accounts:
+    post:
       tags:
-      - User
-      security:
-      - MyToken: []
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: role
-        in: query
-        schema:
-          type: string
-          enum:
-          - admin
-          - member
-          default: member
-
+      - Accounts
+      summary: Register Account
+      operationId: registerAccount
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
       requestBody:
         content:
           application/json:
             schema:
-              oneOf:
-              - $ref: '#/components/schemas/Employee'
-              - $ref: '#/components/schemas/Customer'
+              $ref: '#/components/schemas/Account'
+      security: []
+  /sessions:
+    post:
+      tags:
+      - Accounts
+      summary: Start Session (Login)
+      operationId: startSession
       responses:
         '200':
-          description: Updated user
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      security: []
+  /accounts/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+      - Accounts
+      summary: View Account
+      operationId: viewAccountWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+      - Accounts
+      summary: Modify Account
+      operationId: modifyAccountWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+    delete:
+      tags:
+      - Accounts
+      summary: Delete Account
+      operationId: deleteAccountWithId
+      responses:
+        '204':
+          description: No Content
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /accounts/{id}/tags:
+    get:
+      tags:
+      - Accounts
+      summary: Get A List of Tags for Account
+      operationId: listTagsForAccount
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /accounts/{id}/tag-categories:
+    get:
+      tags:
+      - Accounts
+      summary: Get A List of Tag Categories for Account
+      operationId: listTagCategoriesForAccount
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TagCategory'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /accounts/{id}/projects:
+    get:
+      tags:
+      - Accounts
+      summary: Get A List of Projects for Account
+      operationId: listProjectsForAccount
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Projects'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /profiles:
+    get:
+      tags:
+      - Profiles
+      summary: Get A List of Profiles
+      operationId: listAllProfiles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Profile'
+  /profiles/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+      - Profiles
+      summary: View Profile
+      operationId: viewProfileWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+      - Profiles
+      summary: Modify Profile
+      operationId: modifyProfileWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
         '403': 
           description: Forbidden
           content:
             application/problem+json: 
               schema:
-                $ref: '#/components/schemas/Error' 
+                $ref: '#/components/schemas/Problem'
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+  /tags:
+    post:
+      tags:
+      - Tags
+      summary: Create Tag
+      operationId: createTag
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tag'
+    get:
+      tags:
+      - Tags
+      summary: Get A List of Tags
+      operationId: listAllTags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+  /tags/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+      - Tags
+      summary: View Tag
+      operationId: viewTagWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+      - Tags
+      summary: Modify Tag
+      operationId: modifyTagWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tag'
+    delete:
+      tags:
+      - Tags
+      summary: Delete Tag
+      operationId: deleteTagWithId
+      responses:
+        '204':
+          description: No Content
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /tag-categories:
+    post:
+      tags:
+      - Tags
+      summary: Create Tag Category
+      operationId: createTagCategory
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCategory'
+    get:
+      tags:
+      - Tags
+      summary: Get A List of Tag Categories
+      operationId: listAllTagCategories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TagCategory'
+  /tag-categories/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+      - Tags
+      summary: View Tag Category
+      operationId: viewTagCategoryWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagCategory'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+      - Tags
+      summary: Modify Tag Category
+      operationId: modifyTagCategoryWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagCategory'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCategory'
+    delete:
+      tags:
+      - Tags
+      summary: Delete Tag Category
+      operationId: deleteTagCategoryWithId
+      responses:
+        '204':
+          description: No Content
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /projects:
+    post:
+      tags:
+      - Projects
+      summary: Create Project
+      operationId: createProject
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+    get:
+      tags:
+      - Projects
+      summary: Get A List of Projects
+      operationId: listAllProjects
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Project'
+  /projects/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+      - Projects
+      summary: View Project
+      operationId: viewProjectWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+      - Projects
+      summary: Modify Project
+      operationId: modifyProjectWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '403': 
+          description: Forbidden
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+    delete:
+      tags:
+      - Projects
+      summary: Delete Project
+      operationId: deleteProjectWithId
+      responses:
+        '204':
+          description: No Content
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '403': 
+          description: Forbidden
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /projects/{id}/files:
+    post:
+      tags:
+      - Projects
+      summary: Create File
+      operationId: createFileForProject
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              schema:
+                type: string
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError'
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/File'
+    get:
+      tags:
+      - Projects
+      summary: Get A List of Files
+      operationId: listFilesForProject
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/File'
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+  /projects/{id}/files/{id}:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      tags:
+      - Projects
+      summary: View File
+      operationId: viewFileForProjectWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+    put:
+      tags:
+      - Projects
+      summary: Modify File
+      operationId: modifyFileForProjectWithId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/File'
+    delete:
+      tags:
+      - Projects
+      summary: Delete File
+      operationId: deleteFileForProjectWithId
+      responses:
+        '204':
+          description: No Content
+        '401': 
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OASError' 
+        '404': 
+          description: Not Found
+          content:
+            application/problem+json: 
+              schema:
+                $ref: '#/components/schemas/Problem'
 components:
-  securitySchemes:
-    MyToken:
-      type: apiKey
-      in: header
-      name: Authorization
   schemas:
-    User:
+    Account:
       type: object
-      required: [id, name]
+      properties:
+        id:
+          type: string
+          readOnly: true 
+        email:
+          type: string
+          format: email
+        created_time:
+          type: string
+          format: date-time 
+          writeOnly: true  
+        password:
+          type: string
+          format: password 
+          writeOnly: true 
+          minLength: 8
+    Profile:
+      type: object
       properties:
         id:
           type: string
           readOnly: true 
         name:
           type: string
-        password:
+          minLength: 2 
+          maxLength: 50
+        description:
           type: string
-          format: password 
-          writeOnly: true 
-    Employee:
-      allOf: 
-      - $ref: '#/components/schemas/User'
-      - type: object
-        required:
-        - employee_id
-        properties:
-          employee_id:
-            type: string
-    Customer:
-      allOf:
-      - $ref: '#/components/schemas/User'
-      - type: object
-        properties:
-          sales_rep_id:
-            type: string
-    Error: 
+        updated_time:
+          type: string
+          format: date-time 
+          writeOnly: true
+        profile_photo:
+          type: string
+    Tag:
       type: object
       properties:
+        id:
+          type: string
+          readOnly: true 
+        tag_category_id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+    TagCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+        color:
+          type: string
+    File:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        project_id:
+          type: string
+          readOnly: true
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+        reference:
+          type: string
+        uploaded_time:
+          type: string
+          format: date-time 
+          writeOnly: true
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        account_id:
+          type: string
+          readOnly: true
+        share:
+          type: string
+          enum:
+            - public
+            - private
+        name:
+          type: string
+          minLength: 2 
+          maxLength: 50
+        like_number:
+          type: integer
+          minLength: 0
+        watch_number:
+          type: integer
+          minLength: 0
+        bookmark_number:
+          type: integer
+          minLength: 0
+        from_date:
+          type: string
+          format: date
+        to_date:
+          type: string
+          format: date
+        team_size:
+          type: integer
+          minLength: 0
+        summary:
+          type: string
+        created_time:
+          type: string
+          format: date-time 
+          writeOnly: true
+        photo:
+          type: string
+    Session:
+      type: object
+      properties:
+        user_id:
+          type: string
+        auth_header:
+          type: string
+    # Source: https://github.com/designapis/openapi/blob/main/ch20/openapi.yml
+    OASError: 
+      type: object
+      properties:
+        message:
+          type: string
+          description: Human-readable error message
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+                description: For input validation errors, identifies where in the JSON request body the error occured
+              message:
+                type: string
+                description: Human-readable error message
+              errorCode:
+                type: string
+                description: Code indicating error type
+    Problem: 
+      type: object
+      properties:
+        type:
+          type: string
+          description: URI indicating error type
         title:
           type: string
-          description: Error title
+          description: Human-readable error title
+        status:
+          type: integer
+          description: HTTP status code
+        detail:
+          type: string
+          description: Human-readable error details
+        instance:
+          type: string
+          description: URI indicating error instance
+  securitySchemes:
+    SessionToken:
+      type: apiKey
+      in: header
+      name: Authorization
+security:
+  - SessionToken: []

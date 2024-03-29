@@ -26,7 +26,7 @@ tags:
   - name: Projects
     description: Projects and Files related operations
 servers:
-  - url: https://example.com
+  - url: https://njfps-backend-api.onrender.com
 paths:
   /accounts:
     post:
@@ -170,6 +170,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
   /accounts/{id}/tags:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     get:
       tags:
       - Accounts
@@ -200,6 +206,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
   /accounts/{id}/tag-categories:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     get:
       tags:
       - Accounts
@@ -230,6 +242,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
   /accounts/{id}/projects:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     get:
       tags:
       - Accounts
@@ -246,7 +264,7 @@ paths:
                   items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Projects'
+                      $ref: '#/components/schemas/Project'
         '401': 
           description: Unauthorized
           content:
@@ -755,6 +773,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Problem'
   /projects/{id}/files:
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
     post:
       tags:
       - Projects

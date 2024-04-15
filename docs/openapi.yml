@@ -119,12 +119,12 @@ paths:
                   format: email
                   example: njfps.net@gmail.com
       security: []
-  /sessions:
+  /accounts/sessions:
     post:
       tags:
       - Accounts
-      summary: Start Session (Login)
-      operationId: startSession
+      summary: Start Account Session (Login)
+      operationId: startAccountSession
       responses:
         '200':
           description: OK
@@ -149,7 +149,7 @@ paths:
                 password:
                   type: string
       security: []
-  /sessions/{id}:
+  /accounts/sessions/{id}:
     parameters:
       - schema:
           type: string
@@ -159,8 +159,8 @@ paths:
     delete:
       tags:
       - Accounts
-      summary: Delete Session (Logout)
-      operationId: deleteSessionWithId
+      summary: Delete Account Session (Logout)
+      operationId: deleteAccountSessionWithId
       responses:
         '204':
           description: No Content
